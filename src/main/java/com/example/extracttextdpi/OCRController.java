@@ -15,12 +15,13 @@ public class OCRController {
 
     private final TesseractService tesseractService;
 
+
     public OCRController() {
         this.tesseractService = new TesseractService();
     }
 
     @PostMapping("/extract-text")
-    public ResponseEntity<String> extractTextFromImage(@RequestParam("file") MultipartFile multipartFile) {
+    public ResponseEntity<TextExtract> extractTextFromImage(@RequestParam("file") MultipartFile multipartFile) {
         try {
             // Convertir MultipartFile en File
             File tempFile = convertMultipartFileToFile(multipartFile);
@@ -31,15 +32,17 @@ public class OCRController {
 
             // Effectuer l'OCR avec Tesseract
             String extractedText = tesseractService.performOCR(tempFile, dpi);
+            var text = new TextExtract(extractedText);
 
             // Supprimer le fichier temporaire
             tempFile.delete();
 
-            return ResponseEntity.ok(extractedText);
+            return ResponseEntity.ok(text);
 
-        } catch (Exception e) {
+       } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur : " + e.getMessage());
+           //return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
