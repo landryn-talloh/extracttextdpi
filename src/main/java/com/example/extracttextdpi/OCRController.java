@@ -1,5 +1,6 @@
 package com.example.extracttextdpi;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,8 @@ import java.io.IOException;
 @RequestMapping("/api/ocr")
 public class OCRController {
 
+    private ImagePreprocessingService preprocessingService;
+
     private final TesseractService tesseractService;
 
 
@@ -23,8 +26,10 @@ public class OCRController {
     @PostMapping("/extract-text")
     public ResponseEntity<TextExtract> extractTextFromImage(@RequestParam("file") MultipartFile multipartFile) {
         try {
+            // traitement sur l image
+            MultipartFile processedFile = preprocessingService.preprocessImage(multipartFile);
             // Convertir MultipartFile en File
-            File tempFile = convertMultipartFileToFile(multipartFile);
+            File tempFile = convertMultipartFileToFile(processedFile);
 
             // Extraire la résolution DPI
             int dpi = ImageDpiExtractor.extractDpi(tempFile);
