@@ -14,7 +14,7 @@ import java.io.IOException;
 @RequestMapping("/api/ocr")
 public class OCRController {
 
-    private ImagePreprocessingService preprocessingService;
+    private final ImagePreprocessingService preprocessingService=new ImagePreprocessingService();
 
     private final TesseractService tesseractService;
 

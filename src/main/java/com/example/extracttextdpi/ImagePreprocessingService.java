@@ -21,6 +21,9 @@ public class ImagePreprocessingService {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
+    public ImagePreprocessingService() {
+    }
+
     /**
      * Prétraiter une image pour Tesseract et retourner le résultat en MultipartFile
      * @param file Image en MultipartFile à traiter
