@@ -18,7 +18,9 @@ public class ImagePreprocessingService {
 
     static {
         // Charger la bibliothèque native OpenCV
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
+
+       System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
     public ImagePreprocessingService() {
