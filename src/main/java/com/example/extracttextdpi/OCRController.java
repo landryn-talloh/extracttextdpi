@@ -14,12 +14,14 @@ import java.io.IOException;
 @RequestMapping("/api/ocr")
 public class OCRController {
 
-    private  ImagePreprocessingService preprocessingService;
+    private final ImagePreprocessingService preprocessingService;
 
     private final TesseractService tesseractService;
 
 
     public OCRController() {
+
+        this.preprocessingService = new ImagePreprocessingService();
         this.tesseractService = new TesseractService();
     }
 
