@@ -16,12 +16,12 @@ import java.io.IOException;
 @Service
 public class ImagePreprocessingService {
 
-    static {
-        // Charger la bibliothèque native OpenCV
-
-
-       System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-    }
+//    static {
+//        // Charger la bibliothèque native OpenCV
+//
+//
+//       System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//    }
 
     public ImagePreprocessingService() {
     }
