@@ -39,23 +39,15 @@ public class ImagePreprocessingService {
             throw new IllegalArgumentException("Impossible de lire l'image.");
         }
 
-        // Redimensionner l'image pour s'assurer qu'elle est suffisamment grande pour l'OCR
-        int targetWidth = 1000;
-        int targetHeight = (int) ((double) targetWidth / image.width() * image.height()); // Maintenir l'aspect ratio
-        Mat resizedImage = new Mat();
-        Imgproc.resize(image, resizedImage, new Size(targetWidth, targetHeight));
+        // Pas de redimensionnement si l'image est déjà suffisante
+        Mat resizedImage = image; // Utiliser l'image d'origine
 
-        // Améliorer le contraste (égalisation d'histogramme)
-        Mat equalized = new Mat();
-        Imgproc.equalizeHist(resizedImage, equalized);
-
-        // Appliquer un seuil adaptatif pour binariser l'image
+        // Appliquer un seuil adaptatif seulement si nécessaire
         Mat binaryImage = new Mat();
-        Imgproc.adaptiveThreshold(equalized, binaryImage, 255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 11, 2);
+        Imgproc.adaptiveThreshold(resizedImage, binaryImage, 255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 11, 2);
 
-        // Réduire le bruit avec un flou gaussien
-        Mat blurred = new Mat();
-        Imgproc.GaussianBlur(binaryImage, blurred, new Size(3, 3), 0);
+        // Pas de flou ni ajustement de contraste (ou très léger)
+        Mat blurred = binaryImage;
 
         // Encoder l'image traitée en mémoire
         MatOfByte buffer = new MatOfByte();
