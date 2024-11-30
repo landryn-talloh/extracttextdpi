@@ -43,9 +43,13 @@ public class ImagePreprocessingService {
         Mat equalized = new Mat();
         Imgproc.equalizeHist(image, equalized);
 
+        // Appliquer un seuil adaptatif pour binariser l'image
+        Mat binaryImage = new Mat();
+        Imgproc.adaptiveThreshold(equalized, binaryImage, 255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 11, 2);
+
         // Réduire le bruit avec un flou gaussien
         Mat blurred = new Mat();
-        Imgproc.GaussianBlur(equalized, blurred, new Size(3, 3), 0);
+        Imgproc.GaussianBlur(binaryImage, blurred, new Size(3, 3), 0);
 
         // Encoder l'image traitée en mémoire
         MatOfByte buffer = new MatOfByte();
