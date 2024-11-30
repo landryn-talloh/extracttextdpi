@@ -39,9 +39,15 @@ public class ImagePreprocessingService {
             throw new IllegalArgumentException("Impossible de lire l'image.");
         }
 
+        // Redimensionner l'image pour s'assurer qu'elle est suffisamment grande pour l'OCR
+        int targetWidth = 1000;
+        int targetHeight = (int) ((double) targetWidth / image.width() * image.height()); // Maintenir l'aspect ratio
+        Mat resizedImage = new Mat();
+        Imgproc.resize(image, resizedImage, new Size(targetWidth, targetHeight));
+
         // Améliorer le contraste (égalisation d'histogramme)
         Mat equalized = new Mat();
-        Imgproc.equalizeHist(image, equalized);
+        Imgproc.equalizeHist(resizedImage, equalized);
 
         // Appliquer un seuil adaptatif pour binariser l'image
         Mat binaryImage = new Mat();
