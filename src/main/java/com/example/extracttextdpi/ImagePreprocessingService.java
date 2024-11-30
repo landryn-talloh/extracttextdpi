@@ -33,7 +33,7 @@ public class ImagePreprocessingService {
      * @return MultipartFile de l'image traitée
      */
     public MultipartFile preprocessImage(MultipartFile file) throws IOException {
-        // Charger l'image en mémoire
+        // Charger l'image en mémoire en gris (les PNG sont aussi pris en charge)
         Mat image = Imgcodecs.imdecode(new MatOfByte(file.getBytes()), Imgcodecs.IMREAD_GRAYSCALE);
 
         if (image.empty()) {
@@ -58,9 +58,9 @@ public class ImagePreprocessingService {
         Mat blurred = new Mat();
         Imgproc.GaussianBlur(binaryImage, blurred, new Size(3, 3), 0);
 
-        // Encoder l'image traitée en mémoire
+        // Encoder l'image traitée en mémoire (en format PNG)
         MatOfByte buffer = new MatOfByte();
-        Imgcodecs.imencode(".jpg", blurred, buffer);
+        Imgcodecs.imencode(".png", blurred, buffer); // Sauvegarder l'image en PNG
 
         // Convertir le résultat en MultipartFile
         ByteArrayInputStream inputStream = new ByteArrayInputStream(buffer.toArray());
