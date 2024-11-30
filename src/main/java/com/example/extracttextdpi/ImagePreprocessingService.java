@@ -17,10 +17,10 @@ import java.io.IOException;
 public class ImagePreprocessingService {
 
     static {
-       // Charger la bibliothèque native OpenCV
+        // Charger la bibliothèque native OpenCV
 
 
-      System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
     public ImagePreprocessingService() {
@@ -28,6 +28,7 @@ public class ImagePreprocessingService {
 
     /**
      * Prétraiter une image pour Tesseract et retourner le résultat en MultipartFile
+     *
      * @param file Image en MultipartFile à traiter
      * @return MultipartFile de l'image traitée
      */
@@ -39,15 +40,23 @@ public class ImagePreprocessingService {
             throw new IllegalArgumentException("Impossible de lire l'image.");
         }
 
-        // Pas de redimensionnement si l'image est déjà suffisante
-        Mat resizedImage = image; // Utiliser l'image d'origine
+        // Vérifier la résolution de l'image et augmenter la taille si nécessaire
+        int targetWidth = 1500; // Résolution plus élevée pour les photos de téléphone
+        int targetHeight = (int) ((double) targetWidth / image.width() * image.height()); // Maintenir le ratio
+        Mat resizedImage = new Mat();
+        Imgproc.resize(image, resizedImage, new Size(targetWidth, targetHeight));
 
-        // Appliquer un seuil adaptatif seulement si nécessaire
+        // Appliquer un ajustement de contraste et de luminosité si nécessaire (améliorer la lisibilité du texte)
+        Mat adjustedImage = new Mat();
+        resizedImage.convertTo(adjustedImage, -1, 1.1, 10); // Augmenter légèrement le contraste
+
+        // Appliquer un seuil adaptatif pour binariser l'image (noir et blanc)
         Mat binaryImage = new Mat();
-        Imgproc.adaptiveThreshold(resizedImage, binaryImage, 255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 11, 2);
+        Imgproc.adaptiveThreshold(adjustedImage, binaryImage, 255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 11, 2);
 
-        // Pas de flou ni ajustement de contraste (ou très léger)
-        Mat blurred = binaryImage;
+        // Réduire le bruit avec un flou léger si nécessaire (le flou peut parfois effacer des détails importants)
+        Mat blurred = new Mat();
+        Imgproc.GaussianBlur(binaryImage, blurred, new Size(3, 3), 0);
 
         // Encoder l'image traitée en mémoire
         MatOfByte buffer = new MatOfByte();
@@ -62,4 +71,5 @@ public class ImagePreprocessingService {
                 inputStream                     // Contenu
         );
     }
+
 }
